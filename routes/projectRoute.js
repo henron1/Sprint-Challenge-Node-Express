@@ -8,7 +8,7 @@ const Projects = require('../data/helpers/projectModel');
 router.get('/', async (req, res) => {
     try {
         const projects = await Projects.get();
-        res.status(200).json(project);
+        res.status(200).json(projects);
     }catch (error) {
         console.log(error);
         res.status(500).json({message:'error getting the project!'});
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const project = await Projects.get(req.params.id);
-        if (post) {
+        if (project) {
             res.status(200).json(project);
         } else {
             res.status(404).json({message: 'project not found'});
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
         res.status(400).json({message:'Please provide valid text and user id'})
     }
     try {
-        const project = await Projects.insert({text: req.body.name, user_id: req.body.description});
+        const project = await Projects.insert({name: req.body.name, description: req.body.description});
         res.status(201).json(project);
     } catch (error) {
         console.log(error)
@@ -45,31 +45,48 @@ router.post('/', async (req, res) => {
 // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE // DELETE 
 router.delete('/:id', async (req, res) => {
     try {
-        const count = await Posts.remove(req.params.id);
+        const count = await Projects.remove(req.params.id);
         if (count > 0) {
-            res.status(200).json({message: 'The post has been deleted'});
+            res.status(200).json({message: 'The project has been deleted'});
         } else {
-            res.status(404).json({message: 'The post could not be found'});
+            res.status(404).json({message: 'The project could not be found'});
         } 
     } catch (error) {
         console.log(error)
-        res.status(500).json({message: 'error removing the user.'});
+        res.status(500).json({message: 'error removing the project.'});
     }
 });
 
 // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // PUT // 
 router.put('/:id', async (req, res) => {
     try {
-        const post = await Posts.update(req.params.id, req.body);
-        if(post) {
-            res.status(200).json(post);
+        const project = await Projects.update(req.params.id, req.body);
+        if(project) {
+            res.status(200).json(project);
         }else {
-            res.status(404).json({message: 'post could not be found'});
+            res.status(404).json({message: 'project could not be found'});
         }
     } catch (error) {
         console.log(error)
-        res.status(500).json({message: 'error updating the post.'});
+        res.status(500).json({message: 'error updating the project.'});
     }
+})
+
+// Get an actionf or a project // Get an actionf or a project // Get an actionf or a project // Get an actionf or a project // Get an actionf or a project 
+router.get('/:id/actions', async (req, res) => {
+   
+    try {
+        const project = await Projects.getProjectActions(req.params.id);
+        if(project) {
+            res.status(200).json(project);
+        }else {
+            res.status(404).json({message: 'project not be found'});
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message: 'error finding the project.'});
+    }
+
 })
 
 module.exports = router;
